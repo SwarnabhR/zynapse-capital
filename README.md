@@ -145,11 +145,3 @@ sudo systemctl status nse-downloader
 ```
 
 ***
-
-## ✅ Commit
-
-```bash
-git add README.md
-git commit -m "docs: add setup and quick start guide"
-git push origin main
-```
