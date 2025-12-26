@@ -303,21 +303,46 @@ class AnalyticsEngine:
         """
         self.logger.info("🏆 Generating rankings...")
         
+        # If date specified, filter for reporting only
+        # But we'll rank within each date separately for time-series
         if date:
-            df = df[df['date'] == date].copy()
+            # This is just for single-date analysis
+            rank_df = df[df['date'] == date].copy()
+        else:
+            # Rank each date separately
+            rank_df = df.copy()
         
-        # Calculate composite score (momentum - risk)
-        df['composite_score'] = df['momentum_score'] - (df['risk_score'] * 0.5)
+        # Group by date and rank within each date
+        if 'date' in rank_df.columns:
+            ranked_dfs = []
+            for date_val in rank_df['date'].unique():
+                day_df = rank_df[rank_df['date'] == date_val].copy()
+                
+                # Calculate composite score
+                day_df['composite_score'] = day_df['momentum_score'] - (day_df['risk_score'] * 0.5)
+                
+                # Rank stocks for this date
+                day_df['momentum_rank'] = day_df['momentum_score'].rank(ascending=False, method='min')
+                day_df['risk_rank'] = day_df['risk_score'].rank(ascending=True, method='min')
+                day_df['composite_rank'] = day_df['composite_score'].rank(ascending=False, method='min')
+                
+                # Add percentile ranks
+                day_df['momentum_percentile'] = day_df['momentum_score'].rank(pct=True) * 100
+                day_df['risk_percentile'] = day_df['risk_score'].rank(pct=True) * 100
+                
+                ranked_dfs.append(day_df)
+            
+            result_df = pd.concat(ranked_dfs, ignore_index=True)
+        else:
+            # Single date or no date column
+            result_df = rank_df
+            result_df['composite_score'] = result_df['momentum_score'] - (result_df['risk_score'] * 0.5)
+            result_df['momentum_rank'] = result_df['momentum_score'].rank(ascending=False, method='min')
+            result_df['risk_rank'] = result_df['risk_score'].rank(ascending=True, method='min')
+            result_df['composite_rank'] = result_df['composite_score'].rank(ascending=False, method='min')
+            result_df['momentum_percentile'] = result_df['momentum_score'].rank(pct=True) * 100
+            result_df['risk_percentile'] = result_df['risk_score'].rank(pct=True) * 100
         
-        # Rank stocks
-        df['momentum_rank'] = df['momentum_score'].rank(ascending=False, method='min')
-        df['risk_rank'] = df['risk_score'].rank(ascending=True, method='min')
-        df['composite_rank'] = df['composite_score'].rank(ascending=False, method='min')
+        self.logger.info(f"✅ Rankings generated for {len(result_df)} records")
         
-        # Add percentile ranks
-        df['momentum_percentile'] = df['momentum_score'].rank(pct=True) * 100
-        df['risk_percentile'] = df['risk_score'].rank(pct=True) * 100
-        
-        self.logger.info(f"✅ Rankings generated for {len(df)} stocks")
-        
-        return df
+        return result_df

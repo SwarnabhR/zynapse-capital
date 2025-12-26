@@ -63,7 +63,7 @@ def analyze_dataset(input_file: str, output_dir: str = 'data/analytics'):
     print("STEP 5: Stock Rankings")
     print(f"{'='*80}")
     latest_date = df['date'].max()
-    df = analytics.generate_ranking(df, date=latest_date)
+    df = analytics.generate_ranking(df, date=None)
     
     # Save full analyzed dataset
     output_file = output_path / f"analyzed_{Path(input_file).stem}.csv"
