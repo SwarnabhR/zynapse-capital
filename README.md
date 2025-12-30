@@ -2,9 +2,10 @@
 
 **AI-Powered Financial Intelligence Platform for Indian Stock Markets**
 
-A production-grade quantitative trading system for NSE (National Stock Exchange of India) that combines data acquisition, validation, analytics, and backtesting to generate high-quality trading signals.
+A production-grade quantitative trading system for NSE (National Stock Exchange of India) that combines data acquisition, validation, analytics, backtesting, and **interactive visualization** to generate high-quality trading signals.
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)
 
@@ -12,11 +13,30 @@ A production-grade quantitative trading system for NSE (National Stock Exchange 
 
 Zynapse Capital is a comprehensive quantitative trading platform that:
 - Downloads 7 types of NSE EOD (End-of-Day) data automatically
+
 - Parses and validates 2,379+ securities with 100% accuracy
 - Calculates 20+ technical indicators and derived metrics
 - Generates momentum and risk scores for every stock
 - Backtests trading strategies with institutional-grade metrics
+- **Interactive Dashboard**: Web-based visualization with 2D/3D charts, correlation analysis, and export capabilities
 - **Proven Performance**: Quality strategy achieved 100% win rate with 8.9% annualized returns
+
+## Table of Contents
+
+- [Overview](#-overview)
+- [Proven Performance](#-proven-performance)
+- [Features](#-features)
+- [Quick Start](#-quick-start)
+- [Output Files](#-output-files)
+- [Trading Strategies](#-trading-strategies)
+- [Key Metrics Explained](#-key-metrics-explained)
+- [Data Quality](#-data-quality)
+- [Technical Architecture](#-technical-architecture)
+- [Dependencies](#-dependencies)
+- [Documentation](#-documentation)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Contact](#-contact)
 
 ## 🏆 Proven Performance
 
@@ -81,6 +101,47 @@ Zynapse Capital is a comprehensive quantitative trading platform that:
 - **Trade Tracking**: Full entry/exit with P&L calculation
 - **Strategy Comparison**: Automated ranking and selection
 
+### 🎨 Interactive Dashboard (Phase 6) **NEW!**
+- **📊 Market Overview**:
+  - Real-time market metrics and key indicators
+  - Score distributions (Momentum, Risk, Delivery)
+  - Risk vs Momentum quadrant analysis
+  - Signal distribution pie charts
+  - Top performers and quality stocks tables
+  - Time series trends (multi-day data)
+  
+- **🚀 Stock Analysis**:
+  - Individual stock deep-dive with candlestick charts
+  - Technical indicators (RSI, MACD, Bollinger Bands)
+  - Moving averages overlay (MA 5, 20)
+  - Peer comparison and similar stocks finder
+  - Historical trends and statistics
+  - Volume analysis with price correlation
+  
+- **🌐 3D Visualizations**:
+  - Interactive 3D scatter plots (rotate, zoom, pan)
+  - Custom axis selection from any metrics
+  - Intelligent stock clustering (5 categories)
+  - Time series 3D surface plots
+  - 4 preset views (Classic, Price-Volume, Composite, Delivery)
+  - Adjustable sample size for performance
+  
+- **📈 Correlation Analysis**:
+  - Feature correlation matrix with heatmaps
+  - Stock similarity matrix (top N by volume)
+  - Pair plot matrix (scatter plot matrix)
+  - Calendar heatmap for time series
+  - Find similar stocks tool
+  - Export correlation data
+  
+- **📥 Export & Reports**:
+  - CSV export (lightweight format)
+  - Excel reports (6-sheet workbook with analysis)
+  - Text reports (comprehensive summaries)
+  - Quick export presets (Quality, Top Momentum, Buy Signals, High Risk)
+  - Customizable filters and column selection
+  - File browser for all datasets
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -95,24 +156,20 @@ Create a virtual environment:
 ```bash
 python -m venv venv
 source venv/bin/activate
-# On Windows (Command Prompt):
+# On Windows (Command Prompt)
 # venv\Scripts\activate.bat
-# On Windows (PowerShell):
+# On Windows (PowerShell)
 # venv\Scripts\Activate.ps1
 ```
 
 Install dependencies:
 ```bash
-# Option 1: from a requirements file (if present)
 pip install -r requirements.txt
-
-# Option 2: install core dependencies
-pip install pandas numpy requests
 ```
 
 ### Installation
 ```bash
-git clone https://github.com/yourusername/zynapse-capital.git
+git clone https://github.com/<your-org-or-username>/zynapse-capital.git
 cd zynapse-capital
 mkdir -p data/{raw,processed,analytics,backtest}
 ```
@@ -182,28 +239,54 @@ Custom parameters:
 python scraper/run_backtest.py --input data/analytics/analyzed_equity_full_2025-12-01_to_2025-12-23.csv --strategy quality --capital 5000000 --position-size 0.10
 ```
 
+#### 5. Launch Interactive Dashboard **NEW!**
+
+Start the Streamlit dashboard:
+```bash
+streamlit run dashboard/app.py
+# Open: http://localhost:8501
+```
+
+Or with custom port:
+```bash
+streamlit run dashboard/app.py --server.port 8502
+# Open: http://localhost:8502
+```
+
+The dashboard will open in your browser at `http://localhost:8501` (default).
+
+**Dashboard Features**:
+- 🏠 **Home**: Download and process data directly from UI
+- 📊 **Overview**: Market metrics, distributions, scatter analysis
+- 🚀 **Stock Analysis**: Deep-dive individual stocks with technicals
+- 🌐 **3D Visualizations**: Interactive 3D plots and clustering
+- 📈 **Correlation**: Correlation matrices and similarity analysis
+- 📥 **Export**: Download CSV, Excel, and text reports
+
 ## 📊 Output Files
 
 ### Data Structure
-- data/
-  - raw/ — Downloaded NSE files
-    - YYYY-MM-DD/
-      - bhavcopy/ — Price data (pd*.csv)
-      - delivery/ — Delivery data (MTO*.DAT)
-      - derivatives/ — F&O data
-      - indices/ — Index data
-  - processed/ — Parsed and validated data
-    - equity_full_YYYY-MM-DD.csv
-    - validation_report_YYYY-MM-DD.txt
-  - analytics/ — Analysis outputs
-    - analyzed_equity_full_YYYY-MM-DD.csv
-    - top_momentum_YYYY-MM-DD.csv
-    - quality_stocks_YYYY-MM-DD.csv
-    - high_risk_YYYY-MM-DD.csv
-  - backtest/ — Backtest results
-    - trades_quality.csv
-    - backtest_report_quality.txt
-    - strategy_comparison.csv
+```text
+data/
+├── raw/ # Downloaded NSE files
+│ └── YYYY-MM-DD/
+│ ├── bhavcopy/ # Price data (pd*.csv)
+│ ├── delivery/ # Delivery data (MTO*.DAT)
+│ ├── derivatives/ # F&O data
+│ └── indices/ # Index data
+├── processed/ # Parsed and validated data
+│ ├── equity_full_YYYY-MM-DD.csv
+│ └── validation_report_YYYY-MM-DD.txt
+├── analytics/ # Analysis outputs
+│ ├── analyzed_equity_full_YYYY-MM-DD.csv
+│ ├── top_momentum_YYYY-MM-DD.csv
+│ ├── quality_stocks_YYYY-MM-DD.csv
+│ └── high_risk_YYYY-MM-DD.csv
+└── backtest/ # Backtest results
+    ├── trades_quality.csv
+    ├── backtest_report_quality.txt
+    └── strategy_comparison.csv
+```
 
 ## 🎯 Trading Strategies
 
@@ -269,21 +352,36 @@ Measures risk-adjusted returns (Indian T-Bill rate: 6.5%)
 ## 🛠️ Technical Architecture
 
 ### Core Modules
-- `scraper/`
-  - `downloader.py` — NSE data acquisition
-  - `parser.py` — OHLCV + delivery parsing
-  - `validator.py` — Data quality validation
-  - `analytics.py` — Technical indicators + scoring
-  - `backtest.py` — Strategy simulation engine
-  - `run_backtest.py` — Backtest runner
-  - `analyze.py` — Analytics runner
 
-
+```text
+zynapse-capital/
+├── scraper/                     # Data acquisition, parsing, validation, analytics, backtesting
+│   ├── downloader.py            # NSE data acquisition
+│   ├── parser.py                # OHLCV + delivery parsing
+│   ├── validator.py             # Data quality validation
+│   ├── analytics.py             # Technical indicators + scoring
+│   ├── backtest.py              # Strategy simulation engine
+│   ├── run_backtest.py          # Backtest runner
+│   └── analyze.py               # Analytics runner
+├── dashboard/                   # Streamlit web interface (NEW)
+│   ├── app.py                   # Main dashboard entry
+│   └── pages/
+│       ├── 1_📊_Overview.py           # Market overview & distributions
+│       ├── 2_🚀_Stock_Analysis.py     # Individual stock deep-dive
+│       ├── 3_🌐_3D_Visualizations.py  # 3D scatter & clustering
+│       ├── 4_📈_Correlation.py        # Correlation & similarity
+│       └── 5_📥_Export.py             # Export & reports
+└── data/                         # Data storage
+```
 
 ### Technology Stack
 - **Language**: Python 3.11+
 - **Data Processing**: pandas, numpy
+- **Visualization**: Streamlit, Plotly
+- **Machine Learning**: scikit-learn
 - **HTTP Requests**: requests library
+- **Excel Export**: openpyxl
+- **Scientific Computing**: scipy
 - **Data Storage**: CSV (PostgreSQL/ClickHouse ready)
 - **Logging**: Python logging module
 
@@ -292,11 +390,40 @@ Measures risk-adjusted returns (Indian T-Bill rate: 6.5%)
 - **Memory Efficiency**: Streaming parsing for large files
 - **Validation Throughput**: 7,130 records validated in <1 second
 - **Backtest Speed**: 17 trading days simulated in <2 seconds
+- **Dashboard Load Time**: <2 seconds for 2,379 stocks
+
+## 📦 Dependencies
+
+Core dependencies (see `requirements.txt`):
+```text
+pandas>=2.1.0
+numpy>=1.24.0
+requests>=2.31.0
+```
+
+Optional (Dashboard):
+```text
+streamlit>=1.28.0
+plotly>=5.17.0
+scikit-learn>=1.3.0
+openpyxl>=3.1.0
+scipy>=1.11.0
+```
+
+Install all dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+Or install minimal (without dashboard):
+```bash
+pip install pandas numpy requests
+```
 
 ## 📚 Documentation
 
 ### Data Sources
-- **NSE India**: [https://www.nseindia.com](https://www.nseindia.com)
+- **NSE India**: https://www.nseindia.com
 - **Equity Bhavcopy**: Daily OHLCV data for all listed stocks
 - **Delivery Data (MTO)**: Market-to-market delivery percentages
 - **Update Time**: Available after 6:00 PM IST daily
@@ -306,15 +433,32 @@ Measures risk-adjusted returns (Indian T-Bill rate: 6.5%)
 - **Delivery Data**: `MTO_{DDMMYYYY}.DAT` - Delivery percentages
 - **Corporate Actions**: `bc{DDMMYYYY}.csv` - Splits, bonuses
 
+## 🎨 Dashboard Screenshots
+
+The interactive dashboard provides:
+- Real-time market metrics and key indicators
+- 2D/3D scatter plots with customizable axes
+- Candlestick charts with technical indicators
+- Correlation matrices and heatmaps
+- Stock similarity and peer comparison
+- Export capabilities (CSV, Excel, PDF)
+
+Access the dashboard at `http://localhost:8501` after running:
+```bash
+streamlit run dashboard/app.py
+```
+
 ## 🤝 Contributing
 
 Contributions are welcome! Areas for improvement:
 - Additional technical indicators (Ichimoku, Fibonacci)
 - Machine learning strategy optimization
-- Real-time data integration
-- Web dashboard for signal visualization
+- Real-time data integration (WebSocket feeds)
+- Advanced charting patterns (Head & Shoulders, Cup & Handle)
 - Database integration (PostgreSQL/ClickHouse)
 - API endpoints for external access
+- Mobile-responsive dashboard
+- Backtesting optimization (parallel processing)
 
 ## 📄 License
 
@@ -336,6 +480,14 @@ For questions, suggestions, or collaboration:
 
 ---
 
-**Status**: Production Ready ✅ | **Last Updated**: December 26, 2025
+**Status**: Production Ready ✅ | **Last Updated**: December 30, 2025
 
-**System Capabilities**: Data Acquisition ✅ | Parsing ✅ | Validation ✅ | Analytics ✅ | Backtesting ✅
+**System Capabilities**: 
+- Data Acquisition ✅ 
+- Parsing ✅ 
+- Validation ✅ 
+- Analytics ✅ 
+- Backtesting ✅ 
+- **Interactive Dashboard ✅ NEW!**
+
+**Live Demo**: Run `streamlit run dashboard/app.py` to see it in action! 🚀
